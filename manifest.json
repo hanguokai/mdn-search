@@ -1,0 +1,21 @@
+{
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "version": "0.0.1",
+  "author": "Guokai Han",
+  "manifest_version": 2,
+  "omnibox": {
+    "keyword": "mdn"
+  },
+  "permissions": [
+    "https://developer.mozilla.org/"
+  ],
+  "icons": {
+    "128": "icon/mdn_logo-128.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  }
+}
