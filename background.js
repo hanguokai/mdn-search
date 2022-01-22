@@ -1,5 +1,6 @@
 const SearchIndexURL = 'https://developer.mozilla.org/en-US/search-index.json';
 const CacheName = 'mdn';
+let TimeoutId = 0;
 
 class SearchIndex {
   static async refresh() {
@@ -32,7 +33,19 @@ class Omnibox {
     console.log('input start')
   }
   static onInputChanged(text, suggest) {
+    // debounce input
+    clearTimeout(TimeoutId);
+    TimeoutId = setTimeout(Omnibox.showSuggest, 200, text, suggest);
+  }
+
+  static showSuggest(text, suggest) {
     console.log(`input change: ${text}`)
+    // fake result
+    let results = [
+      {content: "https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/omnibox",
+      description: "<match>Array</match> <url>https://developer.mozilla.org/en-US/docs</url>"},
+    ];
+    suggest(results);
   }
 
   /**
@@ -45,10 +58,7 @@ class Omnibox {
       return;
     }
 
-    // MDN search template: https://developer.mozilla.org/search?q={searchTerms}
-    const search = new URL('https://developer.mozilla.org/search');
-    search.searchParams.append('q', text);
-    const url = search.toString();
+    const url = Omnibox.getResultURL(text);
 
     if (disposition == "currentTab") {
       chrome.tabs.update({url});
@@ -58,6 +68,17 @@ class Omnibox {
         url,
         active: disposition == "newForegroundTab"
       });
+    }
+  }
+
+  static getResultURL(input) {
+    if(input.startsWith('https://developer.mozilla.org/')) {
+      return input;
+    } else {
+      // MDN search template: https://developer.mozilla.org/search?q={searchTerms}
+      const url = new URL('https://developer.mozilla.org/search');
+      url.searchParams.append('q', input);
+      return url.toString();
     }
   }
 }
