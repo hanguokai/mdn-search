@@ -15,7 +15,7 @@
     "128": "icon/mdn_logo-128.png"
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["fuse.js", "background.js"],
     "persistent": false
   }
 }

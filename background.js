@@ -12,7 +12,7 @@ class SearchIndex {
       } else {
         // try to fetch data once
         let success = await SearchIndex.refreshJSON();
-        if(success) {
+        if (success) {
           resp = await caches.match(SearchIndexURL);
           resolve(SearchIndex.buildIndex(await resp.json()));
         } else {
@@ -22,9 +22,10 @@ class SearchIndex {
     });
   }
 
-  static buildIndex(jsonData) {
-    // TODO
-    return jsonData;
+  static buildIndex(json) {
+    return new Fuse(json, {
+      keys: ['title', 'url']
+    });
   }
 
   static getIndex() {
@@ -63,26 +64,48 @@ class Omnibox {
   static onInputChanged(text, suggest) {
     // debounce input
     clearTimeout(TimeoutId);
-    TimeoutId = setTimeout(Omnibox.showSuggest, 200, text, suggest);
+    TimeoutId = setTimeout(Omnibox.showSuggest, 250, text, suggest);
   }
 
+  /**
+   * search index
+   */
   static async showSuggest(text, suggest) {
-    console.log(`input change: ${text}`)
     const index = await SearchIndex.getIndex();
-    if(!index) {
+    if (!index) {
       // TODO: show some tip
       return;
     }
-    // TODO: search with index
+    
+    let searchResults = index.search(text, { limit: 10 });
 
-    // fake results
-    let results = [
-      {
-        content: "Array1",
-        description: "<match>Array1</match> <url>https://developer.mozilla.org/en-US/docs</url>"
-      },
-    ];
-    suggest(results);
+    // transform Fuse serach result[] to SuggestResult[]
+    let suggestResults = [];
+    for (let { item } of searchResults) {
+      // SuggestResult.description:
+      //   Chrome/Edge: support xml and must escape xml
+      //   Firefox: interpreted as plain text
+      suggestResults.push({
+        content: `https://developer.mozilla.org${item.url}`, // final url
+        description: `${Omnibox.escapeXml(item.title)}  ➔  ${item.url}` // autocomplete
+      });
+    }
+    if (suggestResults.length > 0) {
+      suggest(suggestResults);
+    }
+  }
+
+  // source from https://stackoverflow.com/a/27979933/1330598
+  static escapeXml(unsafe) {
+    return unsafe.replace(/[<>&'"]/g, function (c) {
+      switch (c) {
+        case '<': return '&lt;';
+        case '>': return '&gt;';
+        case '&': return '&amp;';
+        case '\'': return '&apos;';
+        case '"': return '&quot;';
+      }
+    });
   }
 
   /**
