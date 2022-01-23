@@ -57,7 +57,6 @@ class SearchIndex {
 
 class Omnibox {
   static onInputStarted() {
-    console.log('input start')
     SearchIndex.getIndex(); // pre-warm index
   }
 
@@ -82,13 +81,18 @@ class Omnibox {
     // transform Fuse serach result[] to SuggestResult[]
     let suggestResults = [];
     for (let result of searchResults) {
+      // set SuggestResult.content to final url
+      let content = `https://developer.mozilla.org${result.item.url}`;
+
       // SuggestResult.description:
-      //   Chrome: support xml tags and text must escape xml
-      //   Firefox: interpreted as plain text
+      // Chrome: support xml tags and text must escape xml
+      let description = Omnibox.highlight(result);
+      // Firefox: interpreted as plain text
+      // let description = `${Omnibox.escapeXml(result.item.title)}  ➔  <url>${result.item.url}</url>`;
+
       suggestResults.push({
-        content: `https://developer.mozilla.org${result.item.url}`, // final url
-        // description: `${Omnibox.escapeXml(result.item.title)}  ➔  <url>${result.item.url}</url>` // Firefox autocomplete
-        description: Omnibox.highlight(result) // Chrome autocomplete
+        content,
+        description
       });
     }
     if (suggestResults.length > 0) {
@@ -152,7 +156,6 @@ class Omnibox {
    * user input enter/cmd+enter, search text
    */
   static onInputEntered(text, disposition) {
-    // console.log(`input enter: ${text}`)
     text = text.trim();
     if (!text) {
       return;
