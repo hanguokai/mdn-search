@@ -81,18 +81,58 @@ class Omnibox {
 
     // transform Fuse serach result[] to SuggestResult[]
     let suggestResults = [];
-    for (let { item } of searchResults) {
+    for (let result of searchResults) {
       // SuggestResult.description:
-      //   Chrome/Edge: support xml and must escape xml
+      //   Chrome: support xml tags and text must escape xml
       //   Firefox: interpreted as plain text
       suggestResults.push({
-        content: `https://developer.mozilla.org${item.url}`, // final url
-        description: `${Omnibox.escapeXml(item.title)}  ➔  ${item.url}` // autocomplete
+        content: `https://developer.mozilla.org${result.item.url}`, // final url
+        // description: `${Omnibox.escapeXml(result.item.title)}  ➔  <url>${result.item.url}</url>` // Firefox autocomplete
+        description: Omnibox.highlight(result) // Chrome autocomplete
       });
     }
     if (suggestResults.length > 0) {
       suggest(suggestResults);
     }
+  }
+
+  static highlight(result) {
+    let titleMatch, urlMatch;
+    for (let m of result.matches) {
+      if (m.key == "title") {
+        titleMatch = m;
+      } else if (m.key == "url") {
+        urlMatch = m;
+      }
+    }
+    let title = titleMatch ? Omnibox.highlightMatch(titleMatch) : result.item.title;
+    let url = urlMatch ? Omnibox.highlightMatch(urlMatch) : result.item.url;
+    return `${title}  ➔  <url>${url}</url>`;
+  }
+
+  /**
+   * Chrome support xml tags: url/match/dim .
+   * text must escape the five predefined entities.
+   */
+  static highlightMatch(match) {
+    let result = [];
+    // step 1: escape xml char
+    for (let char of match.value) {
+      switch (char) {
+        case '<': result.push('&lt;'); break;
+        case '>': result.push('&gt;'); break;
+        case '&': result.push('&amp;'); break;
+        case '\'': result.push('&apos;'); break;
+        case '"': result.push('&quot;'); break;
+        default: result.push(char);
+      }
+    }
+    // step 2: highlight match
+    for (let [from, to] of match.indices) {
+      result[from] = `<match>${result[from]}`;
+      result[to] = `${result[to]}</match>`;
+    }
+    return result.join('');
   }
 
   // source from https://stackoverflow.com/a/27979933/1330598
