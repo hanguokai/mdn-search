@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "快捷搜索 MDN 文档"
+    "message": "MDN 文档搜索"
   },
   "extDescription": {
     "message": "在地址栏上快速搜索 MDN Web 文档，并提供自动完成功能。"
