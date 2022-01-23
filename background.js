@@ -24,6 +24,9 @@ class SearchIndex {
 
   static buildIndex(json) {
     return new Fuse(json, {
+      includeMatches: true,
+      includeScore: true,
+      ignoreLocation: true,
       keys: ['title', 'url']
     });
   }
