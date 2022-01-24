@@ -6,7 +6,7 @@ java -jar $CLOSURE_JAR --language_out ECMASCRIPT_2018 --js_output_file="$file" "
 
 # package
 cd ../..
-zip -r9 mdn-search.zip mdn-search/ -x *build* -x *.git* -x *.DS_Store* *.bak* -x mdn-search/webstore/\*
+zip -r9 mdn-search.zip mdn-search/ -x mdn-search/build/\* mdn-search/webstore/\* mdn-search/.git/\* \*.DS_Store \*.bak \*README.md \*LICENSE
 
 # after package
 cd mdn-search/build
