@@ -118,8 +118,8 @@ class Omnibox {
         urlMatch = m;
       }
     }
-    let title = titleMatch ? Omnibox.highlightMatch(titleMatch) : result.item.title;
-    let url = urlMatch ? Omnibox.highlightMatch(urlMatch) : result.item.url;
+    let title = titleMatch ? Omnibox.highlightMatch(titleMatch) : Omnibox.escapeXml(result.item.title);
+    let url = urlMatch ? Omnibox.highlightMatch(urlMatch) : Omnibox.escapeXml(result.item.url);
     return `${title}  ➔  <url>${url}</url>`;
   }
 
@@ -146,6 +146,19 @@ class Omnibox {
       result[to] = `${result[to]}</match>`;
     }
     return result.join('');
+  }
+
+  // source from https://stackoverflow.com/a/27979933/1330598
+  static escapeXml(unsafe) {
+    return unsafe.replace(/[<>&'"]/g, function (c) {
+      switch (c) {
+        case '<': return '&lt;';
+        case '>': return '&gt;';
+        case '&': return '&amp;';
+        case '\'': return '&apos;';
+        case '"': return '&quot;';
+      }
+    });
   }
 
   /**
