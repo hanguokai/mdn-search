@@ -9,6 +9,7 @@
     "keyword": "mdn"
   },
   "permissions": [
+    "alarms",
     "https://developer.mozilla.org/"
   ],
   "icons": {

@@ -197,11 +197,14 @@ class Omnibox {
 
 function onInstalled() {
   // first install or update
-  // SearchIndex.refreshJSON();
-  // TODO: setup timer to refresh periodically
+  SearchIndex.refreshJSON();
+  chrome.alarms.create("refresh", {
+    periodInMinutes: 2880 // every two days
+  });
 }
 
 chrome.omnibox.onInputStarted.addListener(Omnibox.onInputStarted);
 chrome.omnibox.onInputChanged.addListener(Omnibox.onInputChanged);
 chrome.omnibox.onInputEntered.addListener(Omnibox.onInputEntered);
+chrome.alarms.onAlarm.addListener(SearchIndex.refreshJSON);
 chrome.runtime.onInstalled.addListener(onInstalled);
