@@ -1,3 +1,5 @@
+// const isFirefox = chrome.runtime.getURL("").startsWith("moz-extension");
+const isFirefox = navigator.userAgent.includes("Firefox");
 const SearchIndexURL = 'https://developer.mozilla.org/en-US/search-index.json';
 const CacheName = 'mdn';
 let TimeoutId = 0;// input debounce timer
@@ -87,11 +89,15 @@ class Omnibox {
       // set SuggestResult.content to final url
       let content = `https://developer.mozilla.org${result.item.url}`;
 
-      // SuggestResult.description:
-      // Chrome: support xml tags and text must escape xml
-      let description = Omnibox.highlight(result);
-      // Firefox: interpreted as plain text
-      // let description = `${Omnibox.escapeXml(result.item.title)}  ➔  <url>${result.item.url}</url>`;
+      // SuggestResult.description
+      let description;
+      if(isFirefox) {
+        // Firefox: interpreted as plain text, highlight matches automatically
+        description = `${result.item.title}  ➔  ${result.item.url}`;
+      } else {
+        // Chrome: support xml tags and text must escape xml
+        description = Omnibox.highlight(result);
+      }
 
       suggestResults.push({
         content,
@@ -140,19 +146,6 @@ class Omnibox {
       result[to] = `${result[to]}</match>`;
     }
     return result.join('');
-  }
-
-  // source from https://stackoverflow.com/a/27979933/1330598
-  static escapeXml(unsafe) {
-    return unsafe.replace(/[<>&'"]/g, function (c) {
-      switch (c) {
-        case '<': return '&lt;';
-        case '>': return '&gt;';
-        case '&': return '&amp;';
-        case '\'': return '&apos;';
-        case '"': return '&quot;';
-      }
-    });
   }
 
   /**
