@@ -82,6 +82,7 @@ class Omnibox {
     }
     
     let searchResults = index.search(text, { limit: 10 });
+    searchResults.sort(Omnibox.optimize);
 
     // transform Fuse serach result[] to SuggestResult[]
     let suggestResults = [];
@@ -91,7 +92,7 @@ class Omnibox {
 
       // SuggestResult.description
       let description;
-      if(isFirefox) {
+      if (isFirefox) {
         // Firefox: interpreted as plain text, highlight matches automatically
         description = `${result.item.title}  ➔  ${result.item.url}`;
       } else {
@@ -106,6 +107,19 @@ class Omnibox {
     }
     if (suggestResults.length > 0) {
       suggest(suggestResults);
+    }
+  }
+
+  static optimize(a, b) {
+    // optimize search result
+    // result.score is relevance score that is calculated by Fuse.js
+    // result.refIndex is the index in search-index.json that reflect pageview stats
+    if (a.score < b.score && a.refIndex - b.refIndex > 1000) {
+      return 1; // a after b, because pageview-a is too low
+    } else if (a.score > b.score && b.refIndex - a.refIndex > 1000) {
+      return -1; // a before b, because pageview-b is too low
+    } else {
+      return a.score - b.score;
     }
   }
 
