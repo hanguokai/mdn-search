@@ -13,7 +13,7 @@
     "https://developer.mozilla.org/"
   ],
   "icons": {
-    "128": "icon/mdn_logo-128.png"
+    "192": "icon/mdn_logo-192.png"
   },
   "background": {
     "scripts": ["fuse.js", "background.js"],
