@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Omnibox MDN Search"
+    "message": "MDN Search"
   },
   "extDescription": {
     "message": "Use omnibox to search MDN Web Docs with autocomplete."
