@@ -4,6 +4,7 @@ const SearchIndexURL = 'https://developer.mozilla.org/en-US/search-index.json';
 const CacheName = 'mdn';
 let TimeoutId = 0;// input debounce timer
 let IndexPromise;// a promise resolve to index or null
+let isFirstInput = true;
 
 class SearchIndex {
   static initIndexPromise() {
@@ -62,10 +63,20 @@ class SearchIndex {
 
 class Omnibox {
   static onInputStarted() {
+    isFirstInput = true;
     SearchIndex.getIndex(); // pre-warm index
   }
 
   static onInputChanged(text, suggest) {
+    // optimize(no debounce) for the first input that paste from clipboard
+    if (isFirstInput) {
+      isFirstInput = false;
+      if(text.length > 2) {
+        Omnibox.showSuggest(text, suggest);
+        return;
+      }
+    }
+
     // debounce input
     clearTimeout(TimeoutId);
     TimeoutId = setTimeout(Omnibox.showSuggest, 250, text, suggest);
