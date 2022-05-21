@@ -1,0 +1,4 @@
+1. Firefox only supports manifest v2 currently.
+2. Firefox omnibox feature only support "space" key, don't support "tab" key.
+3. Firefox package tip: The ZIP file must be a ZIP of the extension's files themselves, not of the directory containing them.
+4. Uploading the extension also need to upload all source code files including this extension and 3rd parties.

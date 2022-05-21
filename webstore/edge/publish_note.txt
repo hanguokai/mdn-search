@@ -1,0 +1,4 @@
+Copy and paste below text when update on Edge addons store.
+
+Note: this extension works on Edge version >= 102.
+Usage: type "mdn" in the address bar, then press "tab" key, then enter content you want to search.
