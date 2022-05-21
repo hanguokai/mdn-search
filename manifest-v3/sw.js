@@ -1,0 +1,1 @@
+importScripts("fuse.js", "background.js");

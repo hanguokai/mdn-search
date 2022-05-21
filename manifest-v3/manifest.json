@@ -1,0 +1,24 @@
+{
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "version": "0.0.1",
+  "author": "Guokai Han",
+  "manifest_version": 3,
+  "minimum_chrome_version": "102",
+  "omnibox": {
+    "keyword": "mdn"
+  },
+  "permissions": [
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://developer.mozilla.org/"
+  ],
+  "icons": {
+    "192": "icon/mdn_logo-192.png"
+  },
+  "background": {
+    "service_worker": "sw.js"
+  }
+}
