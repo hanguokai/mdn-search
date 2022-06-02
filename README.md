@@ -10,7 +10,7 @@ a browser extension that let you use browser address bar to search MDN Web Docs 
 [![Chrome Web Store](./webstore/chrome/get-button.png)](https://chrome.google.com/webstore/detail/pdiegkghjahhhikafojgcmflngomilki)
 [![Firefox Addons](./webstore/firefox/get-button.png)](https://addons.mozilla.org/addon/mdn-docs-search/)
 
-## Install From Browser Extension Store
+## Install From Source Code
 
 1. Chrome/Edge: open `about://extensions/` , enable "Developer mode" → click "Load unpacked" → select `manifest-v3` dirtory.
 1. Firefox: open `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on" → select any file in `manifest-v2` dirtory.
